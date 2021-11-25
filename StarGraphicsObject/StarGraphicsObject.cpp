@@ -52,6 +52,7 @@ void StarGraphicsObject::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->setPen(pen());
     painter->rotate(_angle);
     painter->setRenderHint(QPainter::RenderHint::Antialiasing);
+
     QPolygonF polygon;
     polygon.append(QPointF{ 0.0, -_radius });
     polygon.append(QPointF{ -_radius * 0.588, _radius * 0.809 });
