@@ -1,5 +1,6 @@
 #pragma once
 #include "../StarGraphicsObject/StarGraphicsObject.h"
+#include <QGraphicsSceneMouseEvent>
 #include <QGraphicsScene>
 #include <QObject>
 
@@ -17,7 +18,12 @@ public:
 
 protected:
     virtual bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
+    bool buttonClicked(QGraphicsSceneMouseEvent* event);
+    bool buttonMoved(QGraphicsSceneMouseEvent* event);
+    bool buttonReleased(QGraphicsSceneMouseEvent* event);
+
     void updateStarState(const QPointF& mousePos);
 };
 
