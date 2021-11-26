@@ -1,5 +1,4 @@
 #include "StarBuilder.h"
-#include <QGraphicsSceneMouseEvent>
 #include <QMouseEvent>
 #include <QEvent>
 #include <QLineF>
@@ -28,48 +27,58 @@ bool StarBuilder::eventFilter(QObject *watched, QEvent *event)
 
     switch (event->type())
     {
-    case QEvent::Type::GraphicsSceneMousePress:
-    {
-        if(_bufferStar)
-            _bufferStar->deleteLater();
-
-        _bufferStar = new StarGraphicsObject(this);
-        _owner->addItem(_bufferStar);
-        _bufferStar->setPos(mouseEvent->scenePos());
-        _owner->update();
-
-        return false;
+    case QEvent::Type::GraphicsSceneMousePress: return buttonClicked(mouseEvent);
+    case QEvent::Type::GraphicsSceneMouseMove: return buttonMoved(mouseEvent);
+    case QEvent::Type::GraphicsSceneMouseRelease: return buttonReleased(mouseEvent);
+    default: return false;
     }
-    case QEvent::Type::GraphicsSceneMouseMove:
-    {
-        if(_bufferStar == nullptr)
-            return false;
+}
 
-        updateStarState(mouseEvent->scenePos());
-        _owner->update();
+bool StarBuilder::buttonClicked(QGraphicsSceneMouseEvent* event)
+{
+    if((event->button() & Qt::MouseButton::LeftButton) == 0)
         return false;
-    }
-    case QEvent::Type::GraphicsSceneMouseRelease:
-    {
-        if(_bufferStar == nullptr)
-            return false;
-        if(_bufferStar->radius() == 5.0) {
-            _bufferStar->deleteLater();
-            _bufferStar = nullptr;
-            _owner->update();
-            return false;;
-        }
 
-        updateStarState(mouseEvent->scenePos());
+    if(_bufferStar)
+        _bufferStar->deleteLater();
+
+    _bufferStar = new StarGraphicsObject(this);
+    _owner->addItem(_bufferStar);
+    _bufferStar->setPos(event->scenePos());
+    _owner->update();
+    return true;
+}
+bool StarBuilder::buttonMoved(QGraphicsSceneMouseEvent* event)
+{
+    if((event->buttons() & Qt::MouseButton::LeftButton) == 0)
+        return false;
+
+    if(_bufferStar == nullptr)
+        return false;;
+
+    updateStarState(event->scenePos());
+    _owner->update();
+    return true;
+}
+bool StarBuilder::buttonReleased(QGraphicsSceneMouseEvent* event)
+{
+    if((event->button() & Qt::MouseButton::LeftButton) == 0)
+        return false;
+
+    if(_bufferStar == nullptr)
+        return false;
+
+    if(_bufferStar->radius() <= 5.0) {
+        _bufferStar->deleteLater();
         _bufferStar = nullptr;
         _owner->update();
         return false;
     }
-    default:
-    {
-        return false;
-    }
-    }
+
+    updateStarState(event->scenePos());
+    _bufferStar = nullptr;
+    _owner->update();
+    return true;
 }
 void StarBuilder::updateStarState(const QPointF& mousePos)
 {

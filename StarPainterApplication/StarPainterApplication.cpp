@@ -1,23 +1,45 @@
 #include "StarPainterApplication.h"
+#include <QApplication>
+#include <QColorDialog>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QHBoxLayout>
+#include <QMenuBar>
+#include <QScreen>
+#include <QTimer>
+
 
 StarPainterApplication::StarPainterApplication(QWidget *parent)
     :QWidget{ parent }
     {
+        //========================================
+
         _view->setScene(_scene);
         StarBuilder::create(_scene);
-        connect(_screenButton, &QPushButton::clicked, this, &StarPainterApplication::makeScreen);
-        connect(_quitButton, &QPushButton::clicked, qApp, &QApplication::quit);
         _view->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
         _view->setVerticalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOff);
 
-        QHBoxLayout* controlsLayout = new QHBoxLayout;
-            controlsLayout->addWidget(_screenButton, 1);
-            controlsLayout->addStretch(1);
-            controlsLayout->addWidget(_quitButton, 1);
+        //========================================
+
+        QMenuBar* mainMenu = new QMenuBar;
+
+        QMenu* actionsMenu = mainMenu->addMenu("Actions");
+        actionsMenu->addAction("Screen...", this, &StarPainterApplication::makeScreen);
+        actionsMenu->addAction("Canvas color...", this, &StarPainterApplication::changeColor);
+        actionsMenu->addAction("Exit", qApp, &QApplication::quit);
+
+        QMenu* aboutMenu = mainMenu->addMenu("About");
+        aboutMenu->addAction("About app", this, &StarPainterApplication::aboutApp);
+        aboutMenu->addAction("About Qt", qApp, &QApplication::aboutQt);
+
+        //========================================
+
         QVBoxLayout* windowLayout = new QVBoxLayout;
-            windowLayout->addWidget(_view, 1);
-            windowLayout->addLayout(controlsLayout);
+        windowLayout->setMenuBar(mainMenu);
+        windowLayout->addWidget(_view, 1);
         this->setLayout(windowLayout);
+
+        //========================================
     }
 
 void StarPainterApplication::makeScreen()
@@ -28,6 +50,17 @@ void StarPainterApplication::makeScreen()
 
     _view->grab().save(saveFileName, "jpg");
 }
+void StarPainterApplication::changeColor()
+{
+    QColorDialog dialog(QColor(255, 255, 255));
+    if(dialog.exec() == QDialog::Accepted)
+        _view->setBackgroundBrush(QBrush(dialog.selectedColor()));
+}
+void StarPainterApplication::aboutApp()
+{
+    QMessageBox::about(this, "Star painter", "Version: 2.0.0");
+}
+
 void StarPainterApplication::resizeEvent(QResizeEvent *event)
 {
     QWidget::resizeEvent(event);

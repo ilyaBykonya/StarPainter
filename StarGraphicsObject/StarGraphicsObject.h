@@ -7,6 +7,7 @@ class StarGraphicsObject: public QObject, public QAbstractGraphicsShapeItem
 {
     Q_OBJECT
 private:
+    QPolygonF _currentStarPolygon;//Создание полигона - операция недешёвая. Не будем пересоздавать одно и тоже миллиарды раз
     QColorDialog _dialog;
     qreal _radius = 0.0;
     qreal _angle = 0.0;
@@ -28,6 +29,8 @@ protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 private slots:
     void colorUpdated(const QColor& color);
+private:
+    QPolygonF createStarPolygon() const;
 };
 
 
