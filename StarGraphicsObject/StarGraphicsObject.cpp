@@ -2,7 +2,6 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPolygon>
 #include <QPainter>
-#include <QDebug>
 
 StarGraphicsObject::StarGraphicsObject(QObject* parent)
     :QObject{ parent },

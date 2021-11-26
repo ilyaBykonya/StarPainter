@@ -1,9 +1,7 @@
 #include "StarBuilder.h"
 #include <QMouseEvent>
 #include <QEvent>
-#include <QLineF>
 #include <QtMath>
-#include <QDebug>
 
 StarBuilder::StarBuilder(QObject *parent)
     :QObject{ parent }

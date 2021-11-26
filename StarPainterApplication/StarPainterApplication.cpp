@@ -6,7 +6,6 @@
 #include <QHBoxLayout>
 #include <QMenuBar>
 #include <QScreen>
-#include <QTimer>
 
 
 StarPainterApplication::StarPainterApplication(QWidget *parent)
